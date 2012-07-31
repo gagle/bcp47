@@ -1,0 +1,85 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      major: ${{ steps.release.outputs.major }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  build-release:
+    needs: release-please
+    if: needs.release-please.outputs.release_created
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run build
+
+      - name: Update release tag with dist
+        env:
+          TAG_NAME: ${{ needs.release-please.outputs.tag_name }}
+        run: |
+          git config user.name "Gabriel Llamas"
+          git config user.email "gabriel.llamas.llopis@gmail.com"
+          git add -f dist/
+          git commit -m "chore: build dist for ${TAG_NAME}"
+          git tag -f "${TAG_NAME}"
+          git push --force origin "${TAG_NAME}"
+
+      - name: Update major version tag
+        env:
+          MAJOR: ${{ needs.release-please.outputs.major }}
+        run: |
+          git tag -f "v${MAJOR}"
+          git push --force origin "v${MAJOR}"
+
+  publish:
+    needs: build-release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run build
+
+      - name: Publish to npm
+        run: pnpm publish --no-git-checks --provenance --access public
