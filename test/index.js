@@ -16,12 +16,23 @@ describe('bcp47', function () {
     done();
   });
 
+  it('returns null when stringifying a non-object',
+       function(done) {
+    expect(bcp47.stringify(null)).to.be.null();
+    expect(bcp47.stringify(void 0)).to.be.null();
+    expect(bcp47.stringify('')).to.be.null();
+    expect(bcp47.stringify(3)).to.be.null();
+    expect(bcp47.stringify(false)).to.be.null();
+    done();
+  });
+
   describe('langtag', function () {
     describe('language', function () {
       it('{2,3} alpha, 2', function (done) {
         var tag = bcp47.parse('aa');
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.language.extlang).to.be.an.array().and.to.be.empty();
+        expect(bcp47.stringify(tag)).to.be.equal('aa');
         done();
       });
 
@@ -29,6 +40,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aaa');
         expect(tag.langtag.language.language).to.be.equal('aaa');
         expect(tag.langtag.language.extlang).to.be.an.array().and.to.be.empty();
+        expect(bcp47.stringify(tag)).to.be.equal('aaa');
         done();
       });
 
@@ -36,6 +48,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aaaa');
         expect(tag.langtag.language.language).to.be.equal('aaaa');
         expect(tag.langtag.language.extlang).to.be.an.array().and.to.be.empty();
+        expect(bcp47.stringify(tag)).to.be.equal('aaaa');
         done();
       });
 
@@ -43,6 +56,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aaaaa');
         expect(tag.langtag.language.language).to.be.equal('aaaaa');
         expect(tag.langtag.language.extlang).to.be.an.array().and.to.be.empty();
+        expect(bcp47.stringify(tag)).to.be.equal('aaaaa');
         done();
       });
 
@@ -50,6 +64,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aaaaaa');
         expect(tag.langtag.language.language).to.be.equal('aaaaaa');
         expect(tag.langtag.language.extlang).to.be.an.array().and.to.be.empty();
+        expect(bcp47.stringify(tag)).to.be.equal('aaaaaa');
         done();
       });
 
@@ -57,6 +72,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aaaaaaa');
         expect(tag.langtag.language.language).to.be.equal('aaaaaaa');
         expect(tag.langtag.language.extlang).to.be.an.array().and.to.be.empty();
+        expect(bcp47.stringify(tag)).to.be.equal('aaaaaaa');
         done();
       });
 
@@ -64,6 +80,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aaaaaaaa');
         expect(tag.langtag.language.language).to.be.equal('aaaaaaaa');
         expect(tag.langtag.language.extlang).to.be.an.array().and.to.be.empty();
+        expect(bcp47.stringify(tag)).to.be.equal('aaaaaaaa');
         done();
       });
 
@@ -71,6 +88,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aa-bbb');
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.language.extlang).to.only.include(['bbb']);
+        expect(bcp47.stringify(tag)).to.be.equal('aa-bbb');
         done();
       });
 
@@ -78,6 +96,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aaa-bbb-ccc');
         expect(tag.langtag.language.language).to.be.equal('aaa');
         expect(tag.langtag.language.extlang).to.only.include(['bbb', 'ccc']);
+        expect(bcp47.stringify(tag)).to.be.equal('aaa-bbb-ccc');
         done();
       });
 
@@ -86,6 +105,7 @@ describe('bcp47', function () {
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.language.extlang).to.only
             .include(['bbb', 'ccc', 'ddd']);
+        expect(bcp47.stringify(tag)).to.be.equal('aa-bbb-ccc-ddd');
         done();
       });
     });
@@ -95,6 +115,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aa-bbbb');
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.script).to.be.equal('bbbb');
+        expect(bcp47.stringify(tag)).to.be.equal('aa-bbbb');
         done();
       });
     });
@@ -104,6 +125,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aa-bb');
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.region).to.be.equal('bb');
+        expect(bcp47.stringify(tag)).to.be.equal('aa-bb');
         done();
       });
 
@@ -111,6 +133,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aa-111');
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.region).to.be.equal('111');
+        expect(bcp47.stringify(tag)).to.be.equal('aa-111');
         done();
       });
 
@@ -119,6 +142,7 @@ describe('bcp47', function () {
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.script).to.be.equal('bbbb');
         expect(tag.langtag.region).to.be.equal('cc');
+        expect(bcp47.stringify(tag)).to.be.equal('aa-bbbb-cc');
         done();
       });
     });
@@ -128,6 +152,7 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aa-b1b1b');
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.variant).to.only.include(['b1b1b']);
+        expect(bcp47.stringify(tag)).to.be.equal('aa-b1b1b');
         done();
       });
 
@@ -136,6 +161,7 @@ describe('bcp47', function () {
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.variant).to.only
             .include(['b1b1b', '6a8b', 'cccccc']);
+        expect(bcp47.stringify(tag)).to.be.equal('aa-b1b1b-6a8b-cccccc');
         done();
       });
 
@@ -144,6 +170,7 @@ describe('bcp47', function () {
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.variant).to.only.include(['1111', 'ccccc', 'b1b1b']);
         expect(tag.langtag.language.extlang).to.only.include(['bbb', 'ccc']);
+        expect(bcp47.stringify(tag)).to.be.equal('aa-bbb-ccc-1111-ccccc-b1b1b');
         done();
       });
     });
@@ -164,6 +191,7 @@ describe('bcp47', function () {
             }
           ]
         );
+        expect(bcp47.stringify(tag)).to.be.equal('aa-7-123abc-abc-a-12');
         done();
       });
     });
@@ -173,14 +201,15 @@ describe('bcp47', function () {
         var tag = bcp47.parse('aa-x-1234ab-d');
         expect(tag.langtag.language.language).to.be.equal('aa');
         expect(tag.langtag.privateuse).to.only.include(['1234ab', 'd']);
+        expect(bcp47.stringify(tag)).to.be.equal('aa-x-1234ab-d');
         done();
       });
     });
 
     describe('all', function () {
       it('all', function (done) {
-        var tag = bcp47.parse('aaa-bbb-ccc-ddd-abcd-123-abc123-0abc-b-01-' +
-          'abc123-x-01ab-abc12');
+        var str = 'aaa-bbb-ccc-ddd-abcd-123-abc123-0abc-b-01-abc123-x-01ab-abc12'
+        var tag = bcp47.parse(str);
         expect(tag.langtag.language.language).to.be.equal('aaa');
         expect(tag.langtag.language.extlang).to.only
             .include(['bbb', 'ccc', 'ddd']);
@@ -192,6 +221,7 @@ describe('bcp47', function () {
           extension: ['01', 'abc123']
         }]);
         expect(tag.langtag.privateuse).to.only.include(['01ab', 'abc12']);
+        expect(bcp47.stringify(tag)).to.be.equal(str);
         done();
       });
     });
@@ -201,12 +231,15 @@ describe('bcp47', function () {
     it('privateuse', function (done) {
       var tag = bcp47.parse('x-111-aaaaa-BBB');
       expect(tag.privateuse).to.only.include(['111', 'aaaaa', 'BBB']);
+      expect(bcp47.stringify(tag)).to.be.equal('x-111-aaaaa-BBB');
 
       tag = bcp47.parse('x-a');
       expect(tag.privateuse).to.only.include(['a']);
+      expect(bcp47.stringify(tag)).to.be.equal('x-a');
 
       tag = bcp47.parse('x-1-2-a-b');
       expect(tag.privateuse).to.only.include(['1', '2', 'a', 'b']);
+      expect(bcp47.stringify(tag)).to.be.equal('x-1-2-a-b');
 
       done();
     });
@@ -218,7 +251,9 @@ describe('bcp47', function () {
           'i-hak', 'i-klingon', 'i-lux', 'i-mingo', 'i-navajo', 'i-pwn',
           'i-tao', 'i-tay', 'i-tsu', 'sgn-BE-FR', 'sgn-BE-NL', 'sgn-CH-DE'];
       arr.forEach(function (str) {
-        expect(bcp47.parse(str).grandfathered.irregular).to.be.equal(str);
+        var tag = bcp47.parse(str);
+        expect(tag.grandfathered.irregular).to.be.equal(str);
+        expect(bcp47.stringify(tag)).to.be.equal(str);
       });
       done();
     });
@@ -227,9 +262,56 @@ describe('bcp47', function () {
       var arr = ['art-lojban', 'cel-gaulish', 'no-bok', 'no-nyn', 'zh-guoyu',
           'zh-hakka', 'zh-min', 'zh-min-nan', 'zh-xiang'];
       arr.forEach(function (str) {
-        expect(bcp47.parse(str).grandfathered.regular).to.be.equal(str);
+        var tag = bcp47.parse(str);
+        expect(tag.grandfathered.regular).to.be.equal(str);
+        expect(bcp47.stringify(tag)).to.be.equal(str);
       });
       done();
     });
+  });
+
+  describe('stringifying bad values', function() {
+    it('should reject language-less tags with private use', function (done) {
+      expect(bcp47.stringify({
+          langtag: {
+              privateuse: [ "aaaaa" ]
+          }
+      })).to.be.equal(null);
+
+      done();
+    });
+
+    it('should reject language-less tags with no grandfather or private use area', function (done) {
+      expect(bcp47.stringify({ })).to.be.equal(null);
+      expect(bcp47.stringify({
+          langtag: {
+              language: { }
+          }
+      })).to.be.equal(null);
+
+      expect(bcp47.stringify({
+          langtag: {
+              language: { },
+              extlang: true
+          }
+      })).to.be.equal(null);
+
+      done();
+    });
+
+    it('should ignore bad extlangs', function (done) {
+      expect(bcp47.stringify({ })).to.be.equal(null);
+      expect(bcp47.stringify({
+          langtag: {
+              language: {
+                language: 'aa'
+              },
+              extlang: true
+          }
+      })).to.be.equal('aa');
+
+      done();
+    });
+
   });
 });
