@@ -1,1 +1,0 @@
-var BCP47 = require ("../src/bcp47");
