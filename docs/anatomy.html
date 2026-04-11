@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BCP 47 Language Tag Anatomy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: transparent;
+      color: #e6edf3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .tag-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 2px;
+      font-family: 'SF Mono', 'Fira Code', 'Fira Mono', Menlo, Consolas, monospace;
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .part {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .part-value {
+      padding: 6px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .bracket {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .bracket-line {
+      width: 2px;
+      height: 14px;
+      border-radius: 1px;
+    }
+
+    .bracket-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .sep {
+      color: #484f58;
+      font-weight: 400;
+      padding: 6px 0;
+    }
+
+    .language .part-value { background: #1f3a5f; color: #79c0ff; }
+    .language .bracket-line { background: #79c0ff; }
+    .language .bracket-label { color: #79c0ff; }
+
+    .extlang .part-value { background: #1a3a4f; color: #56d4dd; }
+    .extlang .bracket-line { background: #56d4dd; }
+    .extlang .bracket-label { color: #56d4dd; }
+
+    .script .part-value { background: #2a1f4f; color: #d2a8ff; }
+    .script .bracket-line { background: #d2a8ff; }
+    .script .bracket-label { color: #d2a8ff; }
+
+    .region .part-value { background: #1f4f2a; color: #7ee787; }
+    .region .bracket-line { background: #7ee787; }
+    .region .bracket-label { color: #7ee787; }
+
+    .variant .part-value { background: #4f3a1f; color: #ffa657; }
+    .variant .bracket-line { background: #ffa657; }
+    .variant .bracket-label { color: #ffa657; }
+
+    .singleton .part-value { background: #4f1f3a; color: #ff7b72; }
+    .singleton .bracket-line { background: #ff7b72; }
+    .singleton .bracket-label { color: #ff7b72; }
+
+    .ext-subtag .part-value { background: #3a1f2a; color: #ffa198; }
+    .ext-subtag .bracket-line { background: #ffa198; }
+    .ext-subtag .bracket-label { color: #ffa198; }
+
+    .privateuse-x .part-value { background: #2a2a2a; color: #8b949e; }
+    .privateuse-x .bracket-line { background: #8b949e; }
+    .privateuse-x .bracket-label { color: #8b949e; }
+
+    .privateuse .part-value { background: #2a2a2a; color: #8b949e; }
+    .privateuse .bracket-line { background: #8b949e; }
+    .privateuse .bracket-label { color: #8b949e; }
+  </style>
+</head>
+<body>
+  <div class="tag-row">
+    <div class="part language">
+      <div class="part-value">zh</div>
+      <div class="bracket">
+        <div class="bracket-line"></div>
+        <div class="bracket-label">language</div>
+      </div>
+    </div>
+    <div class="sep">-</div>
+    <div class="part extlang">
+      <div class="part-value">cmn</div>
+      <div class="bracket">
+        <div class="bracket-line"></div>
+        <div class="bracket-label">extlang</div>
+      </div>
+    </div>
+    <div class="sep">-</div>
+    <div class="part script">
+      <div class="part-value">Hant</div>
+      <div class="bracket">
+        <div class="bracket-line"></div>
+        <div class="bracket-label">script</div>
+      </div>
+    </div>
+    <div class="sep">-</div>
+    <div class="part region">
+      <div class="part-value">TW</div>
+      <div class="bracket">
+        <div class="bracket-line"></div>
+        <div class="bracket-label">region</div>
+      </div>
+    </div>
+    <div class="sep">-</div>
+    <div class="part variant">
+      <div class="part-value">fonipa</div>
+      <div class="bracket">
+        <div class="bracket-line"></div>
+        <div class="bracket-label">variant</div>
+      </div>
+    </div>
+    <div class="sep">-</div>
+    <div class="part singleton">
+      <div class="part-value">u</div>
+      <div class="bracket">
+        <div class="bracket-line"></div>
+        <div class="bracket-label">singleton</div>
+      </div>
+    </div>
+    <div class="sep">-</div>
+    <div class="part ext-subtag">
+      <div class="part-value">ca</div>
+      <div class="bracket">
+        <div class="bracket-line"></div>
+        <div class="bracket-label">ext</div>
+      </div>
+    </div>
+    <div class="sep">-</div>
+    <div class="part ext-subtag">
+      <div class="part-value">buddhist</div>
+      <div class="bracket">
+        <div class="bracket-line"></div>
+        <div class="bracket-label">ext</div>
+      </div>
+    </div>
+    <div class="sep">-</div>
+    <div class="part privateuse-x">
+      <div class="part-value">x</div>
+      <div class="bracket">
+        <div class="bracket-line"></div>
+        <div class="bracket-label">x</div>
+      </div>
+    </div>
+    <div class="sep">-</div>
+    <div class="part privateuse">
+      <div class="part-value">private</div>
+      <div class="bracket">
+        <div class="bracket-line"></div>
+        <div class="bracket-label">privateuse</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
