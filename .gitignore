@@ -1,2 +1,7 @@
-doc
-manage
+node_modules/
+dist/
+package-lock.json
+*.tsbuildinfo
+coverage/
+test-results/
+github-pages/rfc-bcp47.js
