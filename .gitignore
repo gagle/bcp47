@@ -1,2 +1,6 @@
-doc
-manage
+node_modules/
+dist/
+*.tsbuildinfo
+coverage/
+test-results/
+github-pages/rfc-bcp47.js
