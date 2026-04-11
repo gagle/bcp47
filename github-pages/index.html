@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RFC BCP47 — Interactive Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      padding: 28px 32px 0;
+      border-bottom: 1px solid #21262d;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #8b949e;
+      margin-bottom: 8px;
+    }
+
+    .header .subtitle {
+      font-size: 12px;
+      color: #6e7681;
+      margin-bottom: 20px;
+    }
+    .header .subtitle code {
+      color: #79c0ff;
+      background: #161b22;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .tab {
+      font-size: 14px;
+      font-weight: 500;
+      color: #8b949e;
+      background: none;
+      border: none;
+      padding: 8px 0 12px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .tab:hover {
+      color: #e6edf3;
+    }
+
+    .tab.active {
+      color: #79c0ff;
+      border-bottom-color: #79c0ff;
+    }
+
+    .main {
+      flex: 1;
+      padding: 40px 32px;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* Shared input styles */
+    .input-field {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 14px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #e6edf3;
+      padding: 10px 14px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .input-field:focus {
+      border-color: #79c0ff;
+    }
+
+    textarea.input-field {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    .label code {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 12px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: #79c0ff;
+      text-transform: none;
+      letter-spacing: normal;
+    }
+
+    .panel-description {
+      font-size: 13px;
+      color: #8b949e;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .panel-description code {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 12px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      padding: 2px 6px;
+      color: #79c0ff;
+    }
+
+    .chip-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+      justify-content: center;
+    }
+
+    .chip {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: #c9d1d9;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      white-space: nowrap;
+    }
+
+    .chip:hover {
+      background: #1c2128;
+      border-color: #6e7681;
+      color: #e6edf3;
+    }
+
+    .chip.active {
+      background: #1f3a5f;
+      border-color: #79c0ff;
+      color: #79c0ff;
+    }
+
+    .description {
+      font-size: 13px;
+      color: #8b949e;
+      margin-top: 12px;
+      min-height: 20px;
+      text-align: center;
+    }
+
+    /* Tag anatomy display */
+    .anatomy {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 20px;
+      line-height: 1;
+      flex-wrap: wrap;
+      justify-content: center;
+      row-gap: 20px;
+      min-height: 60px;
+      margin-top: 40px;
+    }
+
+    .tag-part {
+      position: relative;
+      padding: 10px 12px;
+      border-radius: 5px;
+      font-weight: 600;
+      cursor: default;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .tag-part:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .tag-sep {
+      color: #6e7681;
+      padding: 10px 2px;
+      font-weight: 400;
+      user-select: none;
+    }
+
+    .tooltip {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1c2128;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: 6px 10px;
+      white-space: nowrap;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      z-index: 10;
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: #30363d;
+    }
+
+    .tag-part:hover .tooltip {
+      opacity: 1;
+    }
+
+    .type-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: #21262d;
+      color: #8b949e;
+    }
+
+    .badge-row {
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    /* Part colors */
+    .part-language    { background: #1f3a5f; color: #79c0ff; }
+    .part-extlang     { background: #1a3a4f; color: #56d4dd; }
+    .part-script      { background: #2a1f4f; color: #d2a8ff; }
+    .part-region      { background: #1f4f2a; color: #7ee787; }
+    .part-variant     { background: #4f3a1f; color: #ffa657; }
+    .part-singleton   { background: #4f1f3a; color: #ff7b72; }
+    .part-ext-subtag  { background: #3a1f2a; color: #ffa198; }
+    .part-privateuse-x { background: #2a2a2a; color: #8b949e; }
+    .part-privateuse  { background: #2a2a2a; color: #8b949e; }
+    .part-irregular   { background: #3a2a1f; color: #f0c674; }
+    .part-regular     { background: #3a2a1f; color: #f0c674; }
+
+    .tooltip-language    { color: #79c0ff; }
+    .tooltip-extlang     { color: #56d4dd; }
+    .tooltip-script      { color: #d2a8ff; }
+    .tooltip-region      { color: #7ee787; }
+    .tooltip-variant     { color: #ffa657; }
+    .tooltip-singleton   { color: #ff7b72; }
+    .tooltip-ext-subtag  { color: #ffa198; }
+    .tooltip-privateuse-x { color: #8b949e; }
+    .tooltip-privateuse  { color: #8b949e; }
+    .tooltip-irregular   { color: #f0c674; }
+    .tooltip-regular     { color: #f0c674; }
+
+    /* Canonicalize panel */
+    .canon-columns {
+      display: flex;
+      align-items: flex-start;
+      gap: 32px;
+      margin-top: 24px;
+    }
+
+    .canon-side {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .canon-side .anatomy {
+      font-size: 16px;
+      margin-top: 16px;
+      justify-content: flex-start;
+    }
+
+    .canon-side .tag-part {
+      padding: 8px 10px;
+    }
+
+    .canon-arrow {
+      font-size: 24px;
+      color: #6e7681;
+      padding-top: 40px;
+      flex-shrink: 0;
+    }
+
+    .canon-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #8b949e;
+    }
+
+    .canon-tag-text {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 14px;
+      color: #e6edf3;
+      margin-top: 8px;
+    }
+
+    .canon-change {
+      font-size: 13px;
+      color: #8b949e;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    /* Match panel styles */
+    .match-description {
+      font-size: 12px;
+      color: #8b949e;
+      margin-top: 8px;
+      margin-bottom: 16px;
+    }
+
+    .match-results {
+      margin-top: 24px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .match-tag {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      background: #161b22;
+      color: #6e7681;
+      transition: all 0.15s;
+    }
+
+    .match-tag.matched {
+      background: #1f4f2a;
+      border-color: #7ee787;
+      color: #7ee787;
+    }
+
+    .match-result-text {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 14px;
+      color: #7ee787;
+      margin-top: 24px;
+    }
+
+    .match-result-text.no-match {
+      color: #6e7681;
+    }
+
+    /* Negotiate / lookup panel */
+    .negotiate-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 13px;
+    }
+
+    .negotiate-table th {
+      text-align: left;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #8b949e;
+      padding: 8px 12px;
+      border-bottom: 1px solid #21262d;
+    }
+    .negotiate-table.ext-table {
+      table-layout: fixed;
+    }
+    .negotiate-table.ext-table th:first-child,
+    .negotiate-table.ext-table td:first-child {
+      width: 60px;
+    }
+    .negotiate-table.ext-table th:nth-child(2),
+    .negotiate-table.ext-table td:nth-child(2) {
+      width: 45%;
+    }
+
+    .negotiate-table td {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      padding: 8px 12px;
+      border-bottom: 1px solid #161b22;
+      color: #e6edf3;
+    }
+
+    .negotiate-best {
+      margin-top: 20px;
+      padding: 16px;
+      background: #1f4f2a;
+      border: 1px solid #7ee787;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    .negotiate-best .label {
+      color: #7ee787;
+      margin-bottom: 4px;
+    }
+
+    .negotiate-best .value {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 20px;
+      font-weight: 600;
+      color: #7ee787;
+    }
+
+    .negotiate-best.no-match {
+      background: #21262d;
+      border-color: #30363d;
+    }
+
+    .negotiate-best.no-match .label,
+    .negotiate-best.no-match .value {
+      color: #6e7681;
+    }
+
+    /* Pipeline visualization */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .pipeline-step {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      background: #161b22;
+      color: #8b949e;
+    }
+
+    .pipeline-step.active {
+      border-color: #79c0ff;
+      color: #79c0ff;
+      background: #1f3a5f;
+    }
+
+    .pipeline-arrow {
+      color: #6e7681;
+      font-size: 14px;
+    }
+
+    /* Extension legend */
+    .extension-legend {
+      border: 1px solid #21262d;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .extension-legend summary {
+      font-size: 12px;
+      font-weight: 500;
+      color: #8b949e;
+      padding: 10px 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .extension-legend summary:hover {
+      color: #e6edf3;
+    }
+
+    .extension-legend-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      font-size: 12px;
+      padding: 0 14px 12px;
+    }
+
+    .extension-legend-grid .legend-key {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      color: #79c0ff;
+      padding: 3px 12px 3px 0;
+      white-space: nowrap;
+    }
+
+    .extension-legend-grid .legend-value {
+      color: #8b949e;
+      padding: 3px 0;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .row {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .row > * {
+      flex: 1;
+    }
+
+    .match-toggle {
+      display: flex;
+      gap: 4px;
+      margin: 16px 0;
+      justify-content: center;
+    }
+
+    .match-toggle button {
+      font-family: 'SF Mono', 'Fira Code', Menlo, Consolas, monospace;
+      font-size: 12px;
+      padding: 6px 12px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      color: #8b949e;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .match-toggle button:hover {
+      border-color: #6e7681;
+      color: #e6edf3;
+    }
+
+    .match-toggle button.active {
+      background: #1f3a5f;
+      border-color: #79c0ff;
+      color: #79c0ff;
+    }
+
+    @media (max-width: 640px) {
+      .canon-columns {
+        flex-direction: column;
+      }
+
+      .canon-arrow {
+        text-align: center;
+        padding-top: 0;
+      }
+
+      .row {
+        flex-direction: column;
+      }
+
+      .tabs {
+        gap: 16px;
+      }
+
+      .pipeline {
+        gap: 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><a href="https://www.npmjs.com/package/rfc-bcp47" style="color:inherit;text-decoration:none" target="_blank" rel="noopener">RFC BCP47</a></h1>
+    <div class="subtitle">Language tag toolkit for JavaScript &mdash; <a href="https://www.rfc-editor.org/info/bcp47" style="color:#8b949e;text-decoration:underline" target="_blank" rel="noopener">BCP 47</a> defines codes like <code>en-US</code>, <code>zh-Hant-TW</code>, <code>fr-CA</code> that identify human languages</div>
+    <div class="subtitle">Operators &mdash; <code>parse</code> <code>stringify</code> <code>langtag</code> <code>canonicalize</code> <code>filter</code> <code>lookup</code> <code>extensionU</code> <code>extensionT</code> <code>acceptLanguage</code></div>
+    <div class="tabs">
+      <button class="tab active" data-tab="anatomy">Anatomy</button>
+      <button class="tab" data-tab="canonicalize">Canonicalize</button>
+      <button class="tab" data-tab="filter">Filter</button>
+      <button class="tab" data-tab="lookup">Lookup</button>
+      <button class="tab" data-tab="extensions">Extensions</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Anatomy panel -->
+    <div class="panel active" id="panel-anatomy">
+      <p class="panel-description">Operator: <code>parse</code> &mdash; parse a BCP 47 tag into its subtag components</p>
+      <div class="chip-bar" id="anatomyChips"></div>
+      <input class="input-field" id="anatomyInput" placeholder="Type a BCP 47 tag..." spellcheck="false">
+      <div class="description" id="anatomyDesc"></div>
+      <div class="badge-row">
+        <span class="type-badge" id="anatomyBadge" style="display:none"></span>
+      </div>
+      <div class="anatomy" id="anatomyDisplay"></div>
+    </div>
+
+    <!-- Canonicalize panel -->
+    <div class="panel" id="panel-canonicalize">
+      <p class="panel-description">Operator: <code>canonicalize</code> &mdash; normalize casing, replace deprecated subtags, remove suppress-script, promote extlang, and sort extensions per <a href="https://www.rfc-editor.org/rfc/rfc5646#section-4.5" style="color:#79c0ff;text-decoration:none" target="_blank" rel="noopener">RFC 5646</a></p>
+      <div class="chip-bar" id="canonChips"></div>
+      <input class="input-field" id="canonInput" placeholder="Type a tag to canonicalize..." spellcheck="false">
+      <div class="canon-columns">
+        <div class="canon-side">
+          <div class="canon-label">Input</div>
+          <div class="canon-tag-text" id="canonInputText"></div>
+          <div class="anatomy" id="canonInputAnatomy"></div>
+        </div>
+        <div class="canon-arrow">&rarr;</div>
+        <div class="canon-side">
+          <div class="canon-label">Canonical</div>
+          <div class="canon-tag-text" id="canonOutputText"></div>
+          <div class="anatomy" id="canonOutputAnatomy"></div>
+        </div>
+      </div>
+      <div class="canon-change" id="canonChange"></div>
+    </div>
+
+    <!-- Filter panel -->
+    <div class="panel" id="panel-filter">
+      <p class="panel-description">Operator: <code>filter</code> &mdash; find all matching tags with subtag-aware filtering and * wildcards (<a href="https://www.rfc-editor.org/rfc/rfc4647#section-3.3.2" style="color:#79c0ff;text-decoration:none" target="_blank" rel="noopener">RFC 4647 &sect;3.3.2</a>)</p>
+      <div class="section">
+        <div class="label">Available tags (one per line)</div>
+        <div class="match-description">The locales your app supports</div>
+        <textarea class="input-field" id="filterTags" rows="10">en
+en-US
+en-GB
+de
+de-DE
+de-Latn-DE
+de-AT
+fr-FR
+zh-Hant-TW</textarea>
+      </div>
+      <div class="section">
+        <div class="label">Pattern</div>
+        <div class="chip-bar" id="filterPatternChips" style="justify-content: flex-start; margin-bottom: 8px"></div>
+        <input class="input-field" id="filterPattern" value="de" spellcheck="false">
+      </div>
+      <div class="label">Results</div>
+      <div class="match-results" id="filterResults"></div>
+      <div class="match-result-text" id="filterResultText"></div>
+    </div>
+
+    <!-- Lookup panel -->
+    <div class="panel" id="panel-lookup">
+      <p class="panel-description">Operators: <code>acceptLanguage</code> &rarr; <code>lookup</code> &mdash; real HTTP content negotiation per <a href="https://www.rfc-editor.org/rfc/rfc9110#section-12.5.4" style="color:#79c0ff;text-decoration:none" target="_blank" rel="noopener">RFC 9110</a> + <a href="https://www.rfc-editor.org/rfc/rfc4647#section-3.4" style="color:#79c0ff;text-decoration:none" target="_blank" rel="noopener">RFC 4647 &sect;3.4</a></p>
+
+      <div class="pipeline">
+        <span class="pipeline-step active">Accept-Language header</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step active">acceptLanguage()</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step active">lookup()</span>
+        <span class="pipeline-arrow">&rarr;</span>
+        <span class="pipeline-step active">Best locale</span>
+      </div>
+
+      <div class="section">
+        <div class="label">1. Browser sends Accept-Language header</div>
+        <div class="chip-bar" id="lookupHeaderChips" style="justify-content: flex-start; margin-bottom: 8px"></div>
+        <input class="input-field" id="lookupHeader" value="fr-CA, en-US;q=0.8, en;q=0.5, *;q=0.1" spellcheck="false">
+      </div>
+      <div class="section">
+        <div class="label">2. <code>acceptLanguage()</code> parses and sorts by quality</div>
+        <table class="negotiate-table" id="lookupTable">
+          <thead><tr><th>Tag</th><th>Quality</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="section">
+        <div class="label">3. Your available locales</div>
+        <input class="input-field" id="lookupLocales" value="en, en-US, fr, fr-CA, de" spellcheck="false">
+      </div>
+      <div class="section">
+        <div class="label">4. <code>lookup()</code> finds the single best match</div>
+        <div class="match-results" id="lookupResults"></div>
+      </div>
+      <div class="negotiate-best" id="lookupBest">
+        <div class="label">Best match (serve this locale)</div>
+        <div class="value"></div>
+      </div>
+    </div>
+
+    <!-- Extensions panel -->
+    <div class="panel" id="panel-extensions">
+      <p class="panel-description">Operators: <code>extensionU</code> / <code>extensionT</code> &mdash; extract Unicode locale and transformed content data</p>
+      <div class="match-toggle" id="extensionToggle" style="margin-top: 0; margin-bottom: 16px">
+        <button class="active" data-mode="u">Extension U</button>
+        <button data-mode="t">Extension T</button>
+      </div>
+      <div class="match-description" id="extensionDescription" style="text-align: center"></div>
+      <div class="chip-bar" id="extensionChips"></div>
+      <input class="input-field" id="extensionInput" placeholder="Type a BCP 47 tag with an extension..." spellcheck="false">
+      <div id="extensionResult" style="margin-top: 20px"></div>
+      <div id="extensionLegend" style="margin-top: 28px"></div>
+    </div>
+  </div>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "rfc-bcp47": "./rfc-bcp47.js"
+      }
+    }
+  </script>
+  <script type="module">
+    import {
+      parse,
+      canonicalize,
+      filter,
+      lookup,
+      extensionU,
+      extensionT,
+      acceptLanguage,
+      UNICODE_LOCALE_KEYS,
+      TRANSFORM_KEYS,
+    } from 'rfc-bcp47';
+
+    // --- Shared helpers ---
+
+    function createPart(value, label, type) {
+      return '<span class="tag-part part-' + type + '">' +
+        value +
+        '<span class="tooltip tooltip-' + type + '">' + label + '</span>' +
+        '</span>';
+    }
+
+    function createSep() {
+      return '<span class="tag-sep">-</span>';
+    }
+
+    function renderAnatomy(tag, container) {
+      if (!tag) {
+        container.innerHTML = '<span style="color:#6e7681;font-size:14px">Invalid tag</span>';
+        return null;
+      }
+
+      const parts = [];
+
+      switch (tag.type) {
+        case 'grandfathered': {
+          const grandfathered = tag.grandfathered;
+          const type = grandfathered.type;
+          parts.push(createPart(grandfathered.tag, type + ' grandfathered', type));
+          break;
+        }
+
+        case 'privateuse': {
+          parts.push(createPart('x', 'privateuse prefix', 'privateuse-x'));
+          for (const subtag of tag.privateuse) {
+            parts.push(createSep());
+            parts.push(createPart(subtag, 'privateuse', 'privateuse'));
+          }
+          break;
+        }
+
+        case 'langtag': {
+          const langtag = tag.langtag;
+          parts.push(createPart(langtag.language, 'language', 'language'));
+
+          for (const subtag of langtag.extlang) {
+            parts.push(createSep());
+            parts.push(createPart(subtag, 'extlang', 'extlang'));
+          }
+
+          if (langtag.script) {
+            parts.push(createSep());
+            parts.push(createPart(langtag.script, 'script', 'script'));
+          }
+
+          if (langtag.region) {
+            parts.push(createSep());
+            parts.push(createPart(langtag.region, 'region', 'region'));
+          }
+
+          for (const subtag of langtag.variant) {
+            parts.push(createSep());
+            parts.push(createPart(subtag, 'variant', 'variant'));
+          }
+
+          for (const extension of langtag.extension) {
+            parts.push(createSep());
+            parts.push(createPart(extension.singleton, 'extension singleton', 'singleton'));
+            for (const subtag of extension.subtags) {
+              parts.push(createSep());
+              parts.push(createPart(subtag, 'extension subtag', 'ext-subtag'));
+            }
+          }
+
+          if (langtag.privateuse.length > 0) {
+            parts.push(createSep());
+            parts.push(createPart('x', 'privateuse prefix', 'privateuse-x'));
+            for (const subtag of langtag.privateuse) {
+              parts.push(createSep());
+              parts.push(createPart(subtag, 'privateuse', 'privateuse'));
+            }
+          }
+          break;
+        }
+      }
+
+      container.innerHTML = parts.join('');
+      return tag.type;
+    }
+
+    // --- Tab switching ---
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(function(el) { el.classList.remove('active'); });
+      document.querySelectorAll('.panel').forEach(function(el) { el.classList.remove('active'); });
+      var tabButton = document.querySelector('.tab[data-tab="' + tabName + '"]');
+      if (tabButton) {
+        tabButton.classList.add('active');
+        document.getElementById('panel-' + tabName).classList.add('active');
+        var url = new URL(window.location);
+        url.searchParams.set('tab', tabName);
+        history.replaceState(null, '', url);
+      }
+    }
+
+    document.querySelectorAll('.tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        switchTab(tab.dataset.tab);
+      });
+    });
+
+    // Restore tab from URL on load
+    var initialTab = new URLSearchParams(window.location.search).get('tab');
+    if (initialTab && document.getElementById('panel-' + initialTab)) {
+      switchTab(initialTab);
+    }
+
+    // --- Anatomy panel ---
+
+    const ANATOMY_TAGS = [
+      { value: 'en-US', desc: 'English as used in the United States' },
+      { value: 'zh-Hant-TW', desc: 'Chinese, Traditional script, Taiwan' },
+      { value: 'sr-Cyrl-BA', desc: 'Serbian, Cyrillic script, Bosnia' },
+      { value: 'zh-cmn-Hant-TW-fonipa-u-ca-buddhist-x-private', desc: 'All components: extlang, script, region, variant, extension, privateuse' },
+      { value: 'de-DE-u-co-phonebk', desc: 'German with phonebook collation extension' },
+      { value: 'i-klingon', desc: 'Grandfathered: Klingon (irregular)' },
+      { value: 'art-lojban', desc: 'Grandfathered: Lojban constructed language' },
+      { value: 'x-app-internal-v2', desc: 'Standalone private use tag' },
+    ];
+
+    function updateAnatomy(value, desc) {
+      const tag = parse(value);
+      const display = document.getElementById('anatomyDisplay');
+      const badge = document.getElementById('anatomyBadge');
+      const descEl = document.getElementById('anatomyDesc');
+
+      descEl.textContent = desc || '';
+
+      const type = renderAnatomy(tag, display);
+      if (type) {
+        badge.style.display = 'inline-block';
+        badge.textContent = type;
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    const anatomyChips = document.getElementById('anatomyChips');
+    ANATOMY_TAGS.forEach(function(tag) {
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.textContent = tag.value;
+      chip.addEventListener('click', function() {
+        anatomyChips.querySelectorAll('.chip').forEach(function(el) { el.classList.remove('active'); });
+        chip.classList.add('active');
+        document.getElementById('anatomyInput').value = tag.value;
+        updateAnatomy(tag.value, tag.desc);
+      });
+      anatomyChips.appendChild(chip);
+    });
+
+    document.getElementById('anatomyInput').addEventListener('input', function(event) {
+      anatomyChips.querySelectorAll('.chip').forEach(function(el) { el.classList.remove('active'); });
+      updateAnatomy(event.target.value, '');
+    });
+
+    anatomyChips.querySelector('.chip').click();
+
+    // --- Canonicalize panel ---
+
+    const CANON_PRESETS = [
+      { value: 'iw-Hebr-IL', desc: 'Deprecated language + suppress-script' },
+      { value: 'zh-cmn-Hant-TW', desc: 'Extlang canonicalization' },
+      { value: 'i-klingon', desc: 'Grandfathered tag with preferred value' },
+      { value: 'en-Latn-US', desc: 'Suppress-script removal' },
+      { value: 'de-DD', desc: 'Deprecated region replacement' },
+      { value: 'ja-Latn-heploc', desc: 'Deprecated variant replacement' },
+      { value: 'sgn-US', desc: 'Redundant sign language tag' },
+      { value: 'en-u-co-phonebk-ca-buddhist-a-foo', desc: 'Extension singleton + keyword sorting' },
+    ];
+
+    function updateCanon(value) {
+      const inputTag = parse(value);
+      const canonical = canonicalize(value);
+      const outputTag = canonical ? parse(canonical) : null;
+
+      document.getElementById('canonInputText').textContent = value || '';
+      document.getElementById('canonOutputText').textContent = canonical || '(invalid)';
+
+      renderAnatomy(inputTag, document.getElementById('canonInputAnatomy'));
+      renderAnatomy(outputTag, document.getElementById('canonOutputAnatomy'));
+
+      const changeEl = document.getElementById('canonChange');
+      if (canonical && canonical !== value) {
+        changeEl.textContent = value + '  \u2192  ' + canonical;
+      } else if (canonical) {
+        changeEl.textContent = 'Already canonical';
+      } else {
+        changeEl.textContent = '';
+      }
+    }
+
+    const canonChips = document.getElementById('canonChips');
+    CANON_PRESETS.forEach(function(preset) {
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.textContent = preset.value;
+      chip.addEventListener('click', function() {
+        canonChips.querySelectorAll('.chip').forEach(function(el) { el.classList.remove('active'); });
+        chip.classList.add('active');
+        document.getElementById('canonInput').value = preset.value;
+        updateCanon(preset.value);
+      });
+      canonChips.appendChild(chip);
+    });
+
+    document.getElementById('canonInput').addEventListener('input', function(event) {
+      canonChips.querySelectorAll('.chip').forEach(function(el) { el.classList.remove('active'); });
+      updateCanon(event.target.value);
+    });
+
+    canonChips.querySelector('.chip').click();
+
+    // --- Filter panel ---
+
+    const FILTER_PATTERN_PRESETS = [
+      { value: 'de', desc: 'All German locales' },
+      { value: 'de-DE', desc: 'German + Germany (skips Latn script to find DE)' },
+      { value: 'de-*-DE', desc: 'Wildcard: any script for Germany' },
+      { value: 'en', desc: 'All English locales' },
+      { value: '*', desc: 'Wildcard: match everything' },
+    ];
+
+    function updateFilter() {
+      const tagsText = document.getElementById('filterTags').value;
+      const pattern = document.getElementById('filterPattern').value.trim();
+      const tags = tagsText.split('\n').map(function(line) { return line.trim(); }).filter(Boolean);
+
+      const resultsContainer = document.getElementById('filterResults');
+      const resultText = document.getElementById('filterResultText');
+
+      if (!pattern) {
+        resultsContainer.innerHTML = '';
+        resultText.textContent = '';
+        return;
+      }
+
+      const matched = filter(tags, pattern);
+      const matchedSet = new Set(matched);
+      resultsContainer.innerHTML = tags.map(function(tag) {
+        return '<span class="match-tag' + (matchedSet.has(tag) ? ' matched' : '') + '">' + tag + '</span>';
+      }).join('');
+      resultText.className = 'match-result-text' + (matched.length > 0 ? '' : ' no-match');
+      resultText.textContent = matched.length + ' of ' + tags.length + ' tags matched';
+    }
+
+    const filterPatternChips = document.getElementById('filterPatternChips');
+    FILTER_PATTERN_PRESETS.forEach(function(preset) {
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.textContent = preset.value;
+      if (preset.value === 'de') { chip.classList.add('active'); }
+      chip.addEventListener('click', function() {
+        filterPatternChips.querySelectorAll('.chip').forEach(function(el) { el.classList.remove('active'); });
+        chip.classList.add('active');
+        document.getElementById('filterPattern').value = preset.value;
+        updateFilter();
+      });
+      filterPatternChips.appendChild(chip);
+    });
+
+    document.getElementById('filterTags').addEventListener('input', updateFilter);
+    document.getElementById('filterPattern').addEventListener('input', function() {
+      filterPatternChips.querySelectorAll('.chip').forEach(function(el) { el.classList.remove('active'); });
+      updateFilter();
+    });
+    updateFilter();
+
+    // --- Lookup panel ---
+
+    const LOOKUP_HEADER_PRESETS = [
+      { value: 'fr-CA, en-US;q=0.8, en;q=0.5, *;q=0.1', desc: 'French Canadian user, English fallback' },
+      { value: 'zh-Hant-TW, zh-Hant;q=0.9, en-US;q=0.8, en;q=0.7', desc: 'Taiwanese user with English fallback' },
+      { value: 'de-CH, de;q=0.9, fr;q=0.8, en;q=0.5', desc: 'Swiss German user, multilingual fallback' },
+      { value: 'ja;q=1.0', desc: 'Japanese only, no fallback' },
+    ];
+
+    function updateLookup() {
+      const header = document.getElementById('lookupHeader').value;
+      const localesText = document.getElementById('lookupLocales').value;
+      const available = localesText.split(',').map(function(locale) { return locale.trim(); }).filter(Boolean);
+
+      const preferences = acceptLanguage(header);
+
+      const tbody = document.querySelector('#lookupTable tbody');
+      tbody.innerHTML = preferences.map(function(entry) {
+        var q = entry.quality;
+        var qText = q === Math.floor(q) ? q.toFixed(1) : String(q);
+        return '<tr><td>' + entry.tag + '</td><td>' + qText + '</td></tr>';
+      }).join('');
+
+      const userPreferences = preferences.map(function(entry) { return entry.tag; });
+      const best = lookup(available, userPreferences);
+
+      // Show available locales with match highlighted
+      const resultsContainer = document.getElementById('lookupResults');
+      resultsContainer.innerHTML = available.map(function(tag) {
+        const isMatch = best && tag === best;
+        return '<span class="match-tag' + (isMatch ? ' matched' : '') + '">' + tag + '</span>';
+      }).join('');
+
+      const bestEl = document.getElementById('lookupBest');
+      bestEl.className = 'negotiate-best' + (best ? '' : ' no-match');
+      bestEl.querySelector('.value').textContent = best || 'No match';
+    }
+
+    const lookupHeaderChips = document.getElementById('lookupHeaderChips');
+    LOOKUP_HEADER_PRESETS.forEach(function(preset) {
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.textContent = preset.desc;
+      if (preset === LOOKUP_HEADER_PRESETS[0]) { chip.classList.add('active'); }
+      chip.addEventListener('click', function() {
+        lookupHeaderChips.querySelectorAll('.chip').forEach(function(el) { el.classList.remove('active'); });
+        chip.classList.add('active');
+        document.getElementById('lookupHeader').value = preset.value;
+        updateLookup();
+      });
+      lookupHeaderChips.appendChild(chip);
+    });
+
+    document.getElementById('lookupHeader').addEventListener('input', function() {
+      lookupHeaderChips.querySelectorAll('.chip').forEach(function(el) { el.classList.remove('active'); });
+      updateLookup();
+    });
+    document.getElementById('lookupLocales').addEventListener('input', updateLookup);
+    updateLookup();
+
+    // --- Extensions panel ---
+
+    let extensionMode = 'u';
+
+    const EXTENSION_DESCRIPTIONS = {
+      u: 'Unicode locale keywords (<a href="https://www.rfc-editor.org/rfc/rfc6067" style="color:#79c0ff;text-decoration:none" target="_blank" rel="noopener">RFC 6067</a>) \u2014 calendar, collation, currency, numbering system',
+      t: 'Transformed content (<a href="https://www.rfc-editor.org/rfc/rfc6497" style="color:#79c0ff;text-decoration:none" target="_blank" rel="noopener">RFC 6497</a>) \u2014 source language, transliteration, romanization',
+    };
+
+    const EXTENSION_PRESETS = {
+      u: [
+        { value: 'de-DE-u-co-phonebk-ca-buddhist', desc: 'Collation + calendar' },
+        { value: 'ar-u-nu-arab', desc: 'Arabic numbering system' },
+        { value: 'en-US-u-ca-islamic-cu-usd', desc: 'Calendar + currency' },
+        { value: 'ja-u-ca-japanese', desc: 'Japanese calendar' },
+      ],
+      t: [
+        { value: 'und-t-it-m0-ungegn', desc: 'Transliteration mechanism' },
+        { value: 'en-t-zh-h0-pinyin', desc: 'Source Chinese, pinyin romanization' },
+        { value: 'ja-t-it', desc: 'Source Italian, no fields' },
+        { value: 'und-t-und-latn-d0-ascii', desc: 'Latin to ASCII transform' },
+      ],
+    };
+
+    function renderExtensionChips() {
+      const container = document.getElementById('extensionChips');
+      container.innerHTML = '';
+      EXTENSION_PRESETS[extensionMode].forEach(function(preset) {
+        const chip = document.createElement('button');
+        chip.className = 'chip';
+        chip.textContent = preset.value;
+        chip.addEventListener('click', function() {
+          container.querySelectorAll('.chip').forEach(function(el) { el.classList.remove('active'); });
+          chip.classList.add('active');
+          document.getElementById('extensionInput').value = preset.value;
+          updateExtensions();
+        });
+        container.appendChild(chip);
+      });
+    }
+
+    function updateExtensionDescription() {
+      document.getElementById('extensionDescription').innerHTML = EXTENSION_DESCRIPTIONS[extensionMode];
+    }
+
+    function updateExtensions() {
+      const value = document.getElementById('extensionInput').value.trim();
+      const resultContainer = document.getElementById('extensionResult');
+
+      if (!value) {
+        resultContainer.innerHTML = '';
+        return;
+      }
+
+      const tag = parse(value);
+      if (!tag) {
+        resultContainer.innerHTML = '<span style="color:#6e7681;font-size:14px">Invalid tag</span>';
+        return;
+      }
+
+      if (extensionMode === 'u') {
+        const result = extensionU(tag);
+        if (!result) {
+          resultContainer.innerHTML = '<span style="color:#6e7681;font-size:14px">No -u- extension found</span>';
+          return;
+        }
+        let html = '';
+        if (result.attributes.length > 0) {
+          html += '<div class="negotiate-best" style="margin-bottom:16px">' +
+            '<div class="label">Attributes</div>' +
+            '<div class="value">' + result.attributes.join(', ') + '</div></div>';
+        }
+        const keywords = Object.entries(result.keywords);
+        if (keywords.length > 0) {
+          const rows = keywords.map(function(entry) {
+            const meaning = UNICODE_LOCALE_KEYS[entry[0]] || 'Unknown';
+            return '<tr><td>' + entry[0] + '</td><td>' + meaning + '</td><td>' + (entry[1] || '<em style="color:#6e7681">true</em>') + '</td></tr>';
+          }).join('');
+          html += '<table class="negotiate-table ext-table"><thead><tr><th>Key</th><th>Meaning</th><th>Value</th></tr></thead>' +
+            '<tbody>' + rows + '</tbody></table>';
+        }
+        if (result.attributes.length === 0 && keywords.length === 0) {
+          html = '<span style="color:#6e7681;font-size:14px">Extension -u- present but empty</span>';
+        }
+        resultContainer.innerHTML = html;
+      } else {
+        const result = extensionT(tag);
+        if (!result) {
+          resultContainer.innerHTML = '<span style="color:#6e7681;font-size:14px">No -t- extension found</span>';
+          return;
+        }
+        let html = '';
+        if (result.source) {
+          html += '<div class="negotiate-best" style="margin-bottom:16px">' +
+            '<div class="label">Source language</div>' +
+            '<div class="value">' + result.source + '</div></div>';
+        }
+        const fields = Object.entries(result.fields);
+        if (fields.length > 0) {
+          const rows = fields.map(function(entry) {
+            const meaning = TRANSFORM_KEYS[entry[0]] || 'Unknown';
+            return '<tr><td>' + entry[0] + '</td><td>' + meaning + '</td><td>' + entry[1] + '</td></tr>';
+          }).join('');
+          html += '<table class="negotiate-table ext-table"><thead><tr><th>Field</th><th>Meaning</th><th>Value</th></tr></thead>' +
+            '<tbody>' + rows + '</tbody></table>';
+        }
+        if (!result.source && fields.length === 0) {
+          html = '<span style="color:#6e7681;font-size:14px">Extension -t- present but empty</span>';
+        }
+        resultContainer.innerHTML = html;
+      }
+    }
+
+    function renderExtensionLegend() {
+      const keys = extensionMode === 'u' ? UNICODE_LOCALE_KEYS : TRANSFORM_KEYS;
+      const label = extensionMode === 'u'
+        ? 'Unicode locale keywords (<a href="https://cldr.unicode.org/index/bcp47-extension" style="color:#79c0ff;text-decoration:none" target="_blank" rel="noopener">CLDR</a>)'
+        : 'Transform extension fields (<a href="https://cldr.unicode.org/index/bcp47-extension" style="color:#79c0ff;text-decoration:none" target="_blank" rel="noopener">CLDR</a>)';
+      const items = Object.entries(keys).map(function(entry) {
+        return '<span class="legend-key">' + entry[0] + '</span><span class="legend-value">' + entry[1] + '</span>';
+      }).join('');
+      document.getElementById('extensionLegend').innerHTML =
+        '<details class="extension-legend"><summary>' + label + ' \u2014 all keys</summary>' +
+        '<div class="extension-legend-grid">' + items + '</div></details>';
+    }
+
+    document.getElementById('extensionToggle').addEventListener('click', function(event) {
+      if (!event.target.dataset.mode) { return; }
+      document.querySelectorAll('#extensionToggle button').forEach(function(el) { el.classList.remove('active'); });
+      event.target.classList.add('active');
+      extensionMode = event.target.dataset.mode;
+      updateExtensionDescription();
+      renderExtensionLegend();
+      renderExtensionChips();
+      document.getElementById('extensionInput').value = '';
+      document.getElementById('extensionResult').innerHTML = '';
+      document.getElementById('extensionChips').querySelector('.chip').click();
+    });
+
+    document.getElementById('extensionInput').addEventListener('input', function() {
+      document.getElementById('extensionChips').querySelectorAll('.chip').forEach(function(el) { el.classList.remove('active'); });
+      updateExtensions();
+    });
+
+    renderExtensionChips();
+    updateExtensionDescription();
+    renderExtensionLegend();
+    document.getElementById('extensionChips').querySelector('.chip').click();
+  </script>
+</body>
+</html>
