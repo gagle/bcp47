@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/gagle/rfc-bcp47/compare/v1.2.0...v1.3.0) (2026-04-30)
+
+
+### Features
+
+* adopt npm-trust-cli@^0.4.0 + tag-triggered release + Claude Code setup ([ac2c0d0](https://github.com/gagle/rfc-bcp47/commit/ac2c0d0e55640e7545434745f1c006041b584700))
+
 ## [1.2.0](https://github.com/gagle/rfc-bcp47/compare/v1.1.0...v1.2.0) (2026-04-17)
 
 
