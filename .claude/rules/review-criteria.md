@@ -65,10 +65,6 @@ If code-review-graph MCP tools are available, integrate structural findings from
 - Flag changes with large impact radius that aren't mentioned in the ticket scope
 - Use graph-derived caller/callee data to verify consumer impact claims
 
-## Enrichment with agent-skills:review
-
-If the `agent-skills:review` skill is available in the current session, invoke it as part of this review. It provides agnostic five-axis checks (correctness, readability, architecture, security, performance) that complement the criteria above. Merge its findings into the output -- do not produce two separate reviews.
-
 ## Output format
 
 For each finding, provide:
