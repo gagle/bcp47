@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/gagle/rfc-bcp47/compare/v1.3.0...v1.4.0) (2026-05-03)
+
+### Features
+
+- adopt AskUserQuestion in release skill + rename to `npm-trust:setup` ([8c5e4f6](https://github.com/gagle/rfc-bcp47/commit/8c5e4f6))
+- adopt `npm-trust@^0.6.0` + the `solo-npm-release-skill` marketplace plugin ([fa8503a](https://github.com/gagle/rfc-bcp47/commit/fa8503a))
+- require Node 24 and adopt ES2024 modernization (`toSorted`, `at(-1)`, ternary comparators); align all GitHub workflows to read Node version from `.nvmrc` ([d352ba4](https://github.com/gagle/rfc-bcp47/commit/d352ba4))
+
 ## [1.3.0](https://github.com/gagle/rfc-bcp47/compare/v1.2.0...v1.3.0) (2026-04-30)
 
 
