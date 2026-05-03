@@ -1,8 +1,8 @@
 ---
 name: release-solo-npm
 description: >
-  Designed for AI-driven solo dev where PRs are disabled. Tag-triggered
-  npm release with OIDC provenance and ONE human approval — that's the
+  Designed for AI-driven solo dev. Tag-triggered npm release with OIDC
+  provenance and ONE human approval — that's the
   only place a human is in the loop, and it's a structured selector,
   not a free-text prompt. Three phases: pre-flight (silent if green),
   plan (one AskUserQuestion), execute (silent through verification).
