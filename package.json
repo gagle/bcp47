@@ -64,7 +64,6 @@
     "test:coverage": "vitest run --coverage",
     "lint": "tsc --noEmit -p tsconfig.examples.json",
     "prepare": "husky",
-    "npm-trust:setup": "npm-trust --auto --repo gagle/rfc-bcp47 --workflow release.yml",
     "dev:pages": "pnpm run build && cp dist/index.mjs github-pages/rfc-bcp47.js"
   },
   "devDependencies": {

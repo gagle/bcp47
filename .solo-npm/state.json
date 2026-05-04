@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "trust": {
+    "configured": ["rfc-bcp47"],
+    "lastFullCheck": "2026-05-04T11:35:00Z",
+    "ttlDays": 7
+  }
+}
