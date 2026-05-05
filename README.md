@@ -9,6 +9,7 @@
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/Built_with-AI-7e47ff" alt="Built with AI" />
   <a href="https://www.npmjs.com/package/rfc-bcp47"><img src="https://img.shields.io/npm/v/rfc-bcp47.svg" alt="npm version"></a>
   <a href="https://www.npmjs.com/package/rfc-bcp47"><img src="https://img.shields.io/npm/dm/rfc-bcp47.svg" alt="npm downloads"></a>
   <a href="./LICENSE"><img src="https://img.shields.io/npm/l/rfc-bcp47.svg" alt="license"></a>
